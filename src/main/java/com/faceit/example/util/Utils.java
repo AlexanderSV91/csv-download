@@ -1,12 +1,9 @@
 package com.faceit.example.util;
 
-import com.faceit.example.dto.response.MsiResponse;
 import com.faceit.example.model.Msi;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
@@ -53,9 +50,5 @@ public class Utils {
         } catch (IOException e) {
             throw new RuntimeException("fail to parse CSV file: " + e.getMessage());
         }
-    }
-
-    public static PageImpl<MsiResponse> pageEntityToPageResponse(Page<Msi> page, List<MsiResponse> list) {
-        return new PageImpl<>(list, page.getPageable(), page.getTotalElements());
     }
 }

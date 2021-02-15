@@ -1,8 +1,6 @@
 package com.faceit.example.controller;
 
 import com.faceit.example.dto.response.MsiResponse;
-import com.faceit.example.mapper.MsiMapper;
-import com.faceit.example.model.Msi;
 import com.faceit.example.service.MsiService;
 import com.faceit.example.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,19 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(value = {"/api"})
 public class MsiRest {
 
     private final MsiService msiService;
-    private final MsiMapper msiMapper;
 
     @Autowired
-    public MsiRest(MsiService msiService, MsiMapper msiMapper) {
+    public MsiRest(MsiService msiService) {
         this.msiService = msiService;
-        this.msiMapper = msiMapper;
     }
 
     @PostMapping("/msi")
@@ -49,12 +43,7 @@ public class MsiRest {
 
     @GetMapping("/msi")
     public ResponseEntity<Page<MsiResponse>> findPageableMsi(final Pageable pageable) {
-        Page<Msi> pageableMsi = msiService.findPageableMsi(pageable);
-        if (pageableMsi.getContent().isEmpty()) {
-            throw new RuntimeException("not found");
-        }
-        List<MsiResponse> bookResponseList = msiMapper.msiListToMsiResponseList(pageableMsi.getContent());
-        Page<MsiResponse> msiResponses = Utils.pageEntityToPageResponse(pageableMsi, bookResponseList);
+        Page<MsiResponse> msiResponses = msiService.findPageableMsi(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(msiResponses);
     }
 }
