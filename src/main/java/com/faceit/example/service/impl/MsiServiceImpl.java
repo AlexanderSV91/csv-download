@@ -1,6 +1,6 @@
 package com.faceit.example.service.impl;
 
-import com.faceit.example.dto.response.MsiResponse;
+import com.faceit.example.dto.MsiResponse;
 import com.faceit.example.mapper.MsiMapper;
 import com.faceit.example.model.Msi;
 import com.faceit.example.repository.MsiRepository;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 @Service
 public class MsiServiceImpl implements MsiService {
@@ -21,32 +20,33 @@ public class MsiServiceImpl implements MsiService {
     private final MsiRepository msiRepository;
     private final MsiMapper msiMapper;
 
-    public MsiServiceImpl(MsiRepository msiRepository, MsiMapper msiMapper) {
+    public MsiServiceImpl(MsiRepository msiRepository,
+                          MsiMapper msiMapper) {
         this.msiRepository = msiRepository;
         this.msiMapper = msiMapper;
     }
 
     @Override
-    public void save(MultipartFile file) {
+    public void save(final MultipartFile file) {
         try {
-            List<Msi> tutorials = Utils.csvToMsi(file.getInputStream());
-            msiRepository.saveAll(tutorials);
+            this.msiRepository.saveAll(Utils.csvToMsi(file.getInputStream()));
         } catch (IOException e) {
             throw new RuntimeException("fail to store csv data: " + e.getMessage());
         }
     }
 
     @Override
-    public Page<MsiResponse> findPageableMsi(Pageable pageable) {
-        Page<Msi> pageableMsi = msiRepository.findAll(pageable);
+    public Page<MsiResponse> findPageableMsi(final Pageable pageable) {
+        final Page<Msi> pageableMsi = this.msiRepository.findAll(pageable);
         if (pageableMsi.getContent().isEmpty()) {
             throw new RuntimeException("not found");
         }
-        List<MsiResponse> bookResponseList = msiMapper.msiListToMsiResponseList(pageableMsi.getContent());
-        return pageEntityToPageResponse(pageableMsi, bookResponseList);
+        return pageEntityToPageResponse(pageableMsi);
     }
 
-    private PageImpl<MsiResponse> pageEntityToPageResponse(Page<Msi> page, List<MsiResponse> list) {
-        return new PageImpl<>(list, page.getPageable(), page.getTotalElements());
+    private PageImpl<MsiResponse> pageEntityToPageResponse(final Page<Msi> page) {
+        return new PageImpl<>(this.msiMapper.msiListToMsiResponses(page.getContent()),
+                page.getPageable(),
+                page.getTotalElements());
     }
 }

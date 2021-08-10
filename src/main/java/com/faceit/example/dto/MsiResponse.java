@@ -1,22 +1,15 @@
-package com.faceit.example.model;
+package com.faceit.example.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.*;
-
-@Entity()
-@Table(name = "msi")
-@Getter
-@Setter
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Msi {
+public class MsiResponse {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
     String state;
     String name;
